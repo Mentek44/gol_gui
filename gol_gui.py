@@ -46,8 +46,8 @@ def main():
     cur[2][1].rezz()
     cur[2][2].rezz()
 
-    control_frame = ControlFrame(master=root,cur=cur)
-    control_frame.after(1000, update_gol, control_frame, cur)
+    control_frame = ControlFrame(master=root, cur=cur)
+    control_frame.after(200, update_gol, control_frame, cur)
     # updater = threading.Thread(target=update_gol, args=(cur,))
     # updater.start()
     control_frame.mainloop()
@@ -60,6 +60,13 @@ def main():
 def stop_game():
     global RUN
     RUN = False
+
+
+def start_game(control_frame, cur):
+    global RUN
+    if not RUN:
+        control_frame.after(200, update_gol, control_frame, cur)
+        RUN = True
 
 
 class ControlFrame(Frame):
@@ -76,18 +83,11 @@ class ControlFrame(Frame):
 
         self.btn_start = Button(self)
         self.btn_start["text"] = "Start"
-        self.btn_start["command"] = lambda: self.start_game(cur)
+        self.btn_start["command"] = lambda: start_game(self, cur)
         self.btn_start.pack(side="top")
 
         self.btn_stop = Button(self, text="Stop", command=stop_game)
         self.btn_stop.pack(side="top")
-
-    def start_game(self, cur):
-        global RUN
-        if not RUN:
-            self.master.after(200, update_gol, self.master, cur)
-            RUN = True
-
 
 class Cell(object):
     r = 0
