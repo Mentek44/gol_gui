@@ -89,6 +89,7 @@ class ControlFrame(Frame):
         self.btn_stop = Button(self, text="Stop", command=stop_game)
         self.btn_stop.pack(side="top")
 
+
 class Cell(object):
     r = 0
     c = 0
@@ -177,8 +178,6 @@ def has_bot_right(cells: list[list[Cell]], cell: Cell) -> bool:
 
 
 ###############################################################################
-# define rules for next generation
-
 
 def get_neighbour_count(cells: list[list[Cell]], cell: Cell) -> int:
     anc = 0
@@ -225,19 +224,18 @@ def gen_next(old: list[list[Cell]], new: list[list[MyLabel]]) -> list[list[MyLab
 
 ###############################################################################
 
-
 def clone_cells(labels: list[list[MyLabel]]) -> list[list[Cell]]:
     cells = []
     for ri, r in enumerate(labels):
         cols = []
         for ci, c in enumerate(labels[ri]):
-            # TODO clone data from label into some data structure
             cell = Cell(row=ri, col=ci, alive=c.alive)
             cols.append(cell)
         cells.append(cols)
     return cells
 
 
+# main tkinter callback loop
 def update_gol(root: ControlFrame, cur: list[list[MyLabel]]):
     global RUN
     global ALIVE
@@ -253,27 +251,29 @@ def update_gol(root: ControlFrame, cur: list[list[MyLabel]]):
             print(e)
 
 
+# puts labels into grid
 def gen_grid(frame):
     cur = []
     for ri, r in enumerate(range(SIZE)):
         col = []
         for ci, c in enumerate(range(SIZE)):
-            label = MyLabel(frame, width=4, height=2, bg=DEAD)
+            label = MyLabel(frame, width=2, height=1, bg=DEAD)
             label.grid(row=ri, column=ci, padx=1, pady=1)
-            label.bind('<Button-1>', lambda e, lab=label: switch_state(lab))
+            label.bind('<Button-1>', lambda ea, lab=label: switch_state(lab))
             col.append(label)
         cur.append(col)
     return cur
 
 
+# onClick callback
 def switch_state(cell: Label):
     if cell.alive:
         cell.die()
     else:
         cell.rezz()
 
-###############################################################################
 
+###############################################################################
 
 try:
     if __name__ == "__main__":
