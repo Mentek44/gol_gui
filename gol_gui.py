@@ -56,7 +56,6 @@ def main():
 
 ###############################################################################
 
-
 def stop_game():
     global RUN
     RUN = False
@@ -69,6 +68,9 @@ def start_game(control_frame, cur):
         RUN = True
 
 
+################################################################################
+
+# this is the game gui
 class ControlFrame(Frame):
     def __init__(self, master=None, cur=None):
         super(ControlFrame, self).__init__(master=master)
@@ -90,6 +92,7 @@ class ControlFrame(Frame):
         self.btn_stop.pack(side="top")
 
 
+# this object is used for game logic
 class Cell(object):
     r = 0
     c = 0
@@ -106,6 +109,7 @@ class Cell(object):
         self.alive = alive
 
 
+# this is the displayed object
 class MyLabel(Label):
     alive = False
 
@@ -252,7 +256,7 @@ def update_gol(root: ControlFrame, cur: list[list[MyLabel]]):
 
 
 # puts labels into grid
-def gen_grid(frame):
+def gen_grid(frame) -> list[list[MyLabel]]:
     cur = []
     for ri, r in enumerate(range(SIZE)):
         col = []
