@@ -48,12 +48,12 @@ class ControlFrame(Frame):
 
         self.btn_rand = Button(self)
         self.btn_rand["text"] = "Rand"
-        self.btn_rand["command"] = lambda: rand_game(cur)
+        self.btn_rand["command"] = lambda: rand_game(self, cur)
         self.btn_rand.pack(side="top")
 
         self.btn_clear = Button(self)
         self.btn_clear["text"] = "Clear"
-        self.btn_clear["command"] = lambda: clear_game(cur)
+        self.btn_clear["command"] = lambda: clear_game(self, cur)
         self.btn_clear.pack(side="top")
 
 
@@ -140,13 +140,15 @@ def start_game(control_frame, cur):
         RUN = True
 
 
-def clear_game(cur: list[list[MyLabel]]):
+def clear_game(root: ControlFrame,  cur: list[list[MyLabel]]):
+    root.count["text"] = 0
     for r in cur:
         for c in r:
             c.die()
 
 
-def rand_game(cur: list[list[MyLabel]]):
+def rand_game(root: ControlFrame, cur: list[list[MyLabel]]):
+    root.count["text"] = 0
     for r in cur:
         for c in r:
             if random.randint(0,1):
