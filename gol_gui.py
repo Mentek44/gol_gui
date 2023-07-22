@@ -1,6 +1,8 @@
 #!/bin/python3
-# mentek44 Nov21
-# MIT LICENCE
+# mentek44
+# Nov21
+# Jul23
+# GPL
 
 ###############################################################################
 # Any live cell with fewer than two live neighbours dies, as if by underpopulation.
@@ -9,6 +11,7 @@
 # Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 ###############################################################################
 import time
+import random
 from tkinter import *
 import threading
 
@@ -21,6 +24,75 @@ RUN = True
 
 
 ###############################################################################
+
+# this is the game gui
+class ControlFrame(Frame):
+    def __init__(self, master=None, cur=None):
+        super(ControlFrame, self).__init__(master=master)
+        self.master = master
+        self.pack(side="right")
+        self.create_widgets(cur=cur)
+
+    def create_widgets(self, cur):
+        self.count = Label(self)
+        self.count["text"] = 0
+        self.count.pack(side="top")
+
+        self.btn_start = Button(self)
+        self.btn_start["text"] = "Start"
+        self.btn_start["command"] = lambda: start_game(self, cur)
+        self.btn_start.pack(side="top")
+
+        self.btn_stop = Button(self, text="Stop", command=stop_game)
+        self.btn_stop.pack(side="top")
+
+        self.btn_rand = Button(self)
+        self.btn_rand["text"] = "Rand"
+        self.btn_rand["command"] = lambda: rand_game(cur)
+        self.btn_rand.pack(side="top")
+
+        self.btn_clear = Button(self)
+        self.btn_clear["text"] = "Clear"
+        self.btn_clear["command"] = lambda: clear_game(cur)
+        self.btn_clear.pack(side="top")
+
+
+# this object is used for game logic
+class Cell(object):
+    r = 0
+    c = 0
+    alive = False
+
+    def __init__(self, row, col, alive):
+        self.r = row
+        self.c = col
+        self.alive = alive
+
+    def set_cell_data(self, row, col, alive):
+        self.r = row
+        self.c = col
+        self.alive = alive
+
+
+# this is the displayed object
+class MyLabel(Label):
+    alive = False
+
+    def __init__(self, *args, **kwargs):
+        self.alive = False
+        super(MyLabel, self).__init__(*args, **kwargs)
+
+    def die(self):
+        global ALIVE
+        global DEAD
+        self.alive = False
+        self.configure(bg=DEAD)
+
+    def rezz(self):
+        self.alive = True
+        self.configure(bg=ALIVE)
+
+################################################################################
 
 
 def main():
@@ -68,64 +140,19 @@ def start_game(control_frame, cur):
         RUN = True
 
 
-################################################################################
-
-# this is the game gui
-class ControlFrame(Frame):
-    def __init__(self, master=None, cur=None):
-        super(ControlFrame, self).__init__(master=master)
-        self.master = master
-        self.pack(side="right")
-        self.create_widgets(cur=cur)
-
-    def create_widgets(self, cur):
-        self.count = Label(self)
-        self.count["text"] = 0
-        self.count.pack(side="top")
-
-        self.btn_start = Button(self)
-        self.btn_start["text"] = "Start"
-        self.btn_start["command"] = lambda: start_game(self, cur)
-        self.btn_start.pack(side="top")
-
-        self.btn_stop = Button(self, text="Stop", command=stop_game)
-        self.btn_stop.pack(side="top")
+def clear_game(cur: list[list[MyLabel]]):
+    for r in cur:
+        for c in r:
+            c.die()
 
 
-# this object is used for game logic
-class Cell(object):
-    r = 0
-    c = 0
-    alive = False
-
-    def __init__(self, row, col, alive):
-        self.r = row
-        self.c = col
-        self.alive = alive
-
-    def set_cell_data(self, row, col, alive):
-        self.r = row
-        self.c = col
-        self.alive = alive
-
-
-# this is the displayed object
-class MyLabel(Label):
-    alive = False
-
-    def __init__(self, *args, **kwargs):
-        self.alive = False
-        super(MyLabel, self).__init__(*args, **kwargs)
-
-    def die(self):
-        global ALIVE
-        global DEAD
-        self.alive = False
-        self.configure(bg=DEAD)
-
-    def rezz(self):
-        self.alive = True
-        self.configure(bg=ALIVE)
+def rand_game(cur: list[list[MyLabel]]):
+    for r in cur:
+        for c in r:
+            if random.randint(0,1):
+                c.rezz()
+            else:
+                c.die()
 
 
 ###############################################################################
@@ -264,6 +291,7 @@ def gen_grid(frame) -> list[list[MyLabel]]:
             label = MyLabel(frame, width=2, height=1, bg=DEAD)
             label.grid(row=ri, column=ci, padx=1, pady=1)
             label.bind('<Button-1>', lambda ea, lab=label: switch_state(lab))
+            #           label.bind('<Button-1><Button-1>', lambda ea, lab=label: switch_state(lab))
             col.append(label)
         cur.append(col)
     return cur
