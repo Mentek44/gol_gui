@@ -1,7 +1,5 @@
 #!/bin/python3
 # mentek44
-# Nov21
-# Jul23
 # GPL
 
 ###############################################################################
@@ -103,6 +101,7 @@ class MyLabel(Label):
         self.alive = True
         self.configure(bg=ALIVE)
 
+
 ################################################################################
 
 
@@ -149,7 +148,7 @@ def start_game(control_frame, cur):
         RUN = True
 
 
-def clear_game(root: ControlFrame,  cur: list[list[MyLabel]]):
+def clear_game(root: ControlFrame, cur: list[list[MyLabel]]):
     root.count["text"] = 0
     for r in cur:
         for c in r:
@@ -160,7 +159,7 @@ def rand_game(root: ControlFrame, cur: list[list[MyLabel]]):
     root.count["text"] = 0
     for r in cur:
         for c in r:
-            if random.randint(0,1):
+            if random.randint(0, 1):
                 c.rezz()
             else:
                 c.die()
@@ -286,7 +285,7 @@ def clone_cells(labels: list[list[MyLabel]]) -> list[list[Cell]]:
     cells = []
     for ri, r in enumerate(labels):
         cols = []
-        for ci, c in enumerate(labels[ri]):
+        for ci, c in enumerate(r):
             cell = Cell(row=ri, col=ci, alive=c.alive)
             cols.append(cell)
         cells.append(cols)
@@ -296,8 +295,6 @@ def clone_cells(labels: list[list[MyLabel]]) -> list[list[Cell]]:
 # main tkinter callback loop
 def update_gol(root: ControlFrame, cur: list[list[MyLabel]]):
     global RUN
-    global ALIVE
-    global DEAD
     if RUN:
         try:
             tmp_cell = clone_cells(cur)
@@ -317,14 +314,14 @@ def gen_grid(frame) -> list[list[MyLabel]]:
             label = MyLabel(frame, width=2, height=1, bg=DEAD)
             label.grid(row=ri, column=ci, padx=1, pady=1)
             label.bind('<Button-1>', lambda ea, lab=label: switch_state(lab))
-            #           label.bind('<Button-1><Button-1>', lambda ea, lab=label: switch_state(lab))
+            # label.bind('<Button-1><Button-1>', lambda ea, lab=label: switch_state(lab))
             col.append(label)
         cur.append(col)
     return cur
 
 
 # onClick callback
-def switch_state(cell: Label):
+def switch_state(cell: MyLabel):
     if cell.alive:
         cell.die()
     else:
