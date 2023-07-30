@@ -100,16 +100,14 @@ def main():
     global SIZE
     global DEAD
     global ALIVE
+
     root = Tk()
     root.title("test")
 
     frame = Frame()
 
     cur = gen_grid(frame)
-    # cur[4][3].rezz()
     frame.pack(side="left")
-    # cur = [[CellLabel(root).set_cell_data(c=c, r=r, val=0) for c in range(SIZE)] for r in range(SIZE)]
-    # new = [[CellLabel(root).set_cell_data(c=c, r=r, val=0) for c in range(SIZE)] for r in range(SIZE)]
 
     # glider
     cur[0][1].rezz()
@@ -120,8 +118,6 @@ def main():
 
     control_frame = ControlFrame(master=root, cur=cur)
     control_frame.after(200, update_gol, control_frame, cur)
-    # updater = threading.Thread(target=update_gol, args=(cur,))
-    # updater.start()
     control_frame.mainloop()
     RUN = False
 
@@ -236,7 +232,6 @@ def get_neighbour_count(cells: list[list[Cell]], cell: Cell) -> int:
 ###############################################################################
 
 def gen_next(old: list[list[Cell]], new: list[list[MyLabel]]) -> list[list[MyLabel]]:
-    # new = [[Cell(row=r, col=c) for c in range(len(old))] for r in range(len(old))]
     for ri, r in enumerate(old):
         for ci, c in enumerate(r):
             # alive neighbour count
@@ -277,7 +272,6 @@ def update_gol(root: ControlFrame, cur: list[list[MyLabel]]):
         try:
             tmp_cell = clone_cells(cur)
             cur = gen_next(tmp_cell, new=cur)
-            # time.sleep(0.2)
             root.count["text"] += 1
             root.after(200, update_gol, root, cur)
         except Exception as e:
