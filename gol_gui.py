@@ -21,6 +21,7 @@ SIZE = 40
 DEAD = "#000000"
 ALIVE = "#FFFFFF"
 RUN = True
+SAVED = None
 
 
 ###############################################################################
@@ -55,6 +56,16 @@ class ControlFrame(Frame):
         self.btn_clear["text"] = "Clear"
         self.btn_clear["command"] = lambda: clear_game(self, cur)
         self.btn_clear.pack(side="top")
+
+        self.btn_save = Button(self)
+        self.btn_save["text"] = "Save"
+        self.btn_save["command"] = lambda: save(self, cur)
+        self.btn_save.pack(side="top")
+
+        self.btn_restore = Button(self)
+        self.btn_restore["text"] = "Restore"
+        self.btn_restore["command"] = lambda: restore(self, cur)
+        self.btn_restore.pack(side="top")
 
 
 # this object is used for game logic
@@ -100,6 +111,7 @@ def main():
     global SIZE
     global DEAD
     global ALIVE
+    global SAVED
 
     root = Tk()
     root.title("test")
@@ -118,6 +130,7 @@ def main():
 
     control_frame = ControlFrame(master=root, cur=cur)
     control_frame.after(200, update_gol, control_frame, cur)
+    SAVED = (control_frame.count["text"], clone_cells(cur))
     control_frame.mainloop()
     RUN = False
 
@@ -151,6 +164,23 @@ def rand_game(root: ControlFrame, cur: list[list[MyLabel]]):
                 c.rezz()
             else:
                 c.die()
+
+
+def restore(root: ControlFrame, cur: list[list[MyLabel]]):
+    global SAVED
+    for i, r in enumerate(SAVED[1]):
+        for j, c in enumerate(r):
+            if SAVED[1][i][j].alive:
+                cur[i][j].rezz()
+            else:
+                cur[i][j].die()
+
+    root.count["text"] = SAVED[0]
+
+
+def save(root: ControlFrame, cur: list[list[MyLabel]]):
+    global SAVED
+    SAVED = (root.count["text"], clone_cells(cur))
 
 
 ###############################################################################
